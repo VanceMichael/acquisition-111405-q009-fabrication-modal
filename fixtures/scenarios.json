@@ -1,0 +1,306 @@
+[
+  {
+    "name": "attribute-scope",
+    "routes": [
+      {
+        "path": "/fabrication",
+        "body": {
+          "job": "j1",
+          "layers": [
+            {
+              "id": "top",
+              "href": "/layer/top"
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/layer/top",
+        "body": [
+          {
+            "op": "format",
+            "integer": 2,
+            "decimal": 4,
+            "zeroSuppression": "leading"
+          },
+          {
+            "op": "unit",
+            "value": "mm"
+          },
+          {
+            "op": "aperture",
+            "id": "10",
+            "shape": "C",
+            "params": [
+              "0.5"
+            ]
+          },
+          {
+            "op": "select",
+            "id": "10"
+          },
+          {
+            "op": "attribute",
+            "scope": "object",
+            "key": "net",
+            "value": "GND"
+          },
+          {
+            "op": "flash",
+            "x": "10000",
+            "y": "20000",
+            "byteStart": 80,
+            "byteEnd": 95
+          },
+          {
+            "op": "deleteAttribute",
+            "scope": "object",
+            "key": "*"
+          },
+          {
+            "op": "flash",
+            "x": "30000",
+            "byteStart": 100,
+            "byteEnd": 112
+          }
+        ],
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "kind": "flash",
+        "position": [
+          1,
+          2
+        ],
+        "aperture": "10",
+        "attributes": {
+          "net": "GND"
+        }
+      },
+      {
+        "kind": "flash",
+        "position": [
+          3,
+          2
+        ],
+        "attributes": {}
+      }
+    ],
+    "forbidden": []
+  },
+  {
+    "name": "unknown-axis",
+    "routes": [
+      {
+        "path": "/fabrication",
+        "body": {
+          "job": "j2",
+          "layers": [
+            {
+              "id": "top",
+              "href": "/layer/top"
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/layer/top",
+        "body": [
+          {
+            "op": "format",
+            "integer": 2,
+            "decimal": 4,
+            "zeroSuppression": "leading"
+          },
+          {
+            "op": "unit",
+            "value": "mm"
+          },
+          {
+            "op": "flash",
+            "x": "10000"
+          }
+        ],
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [],
+    "forbidden": [
+      {
+        "kind": "flash",
+        "position": [
+          1,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "layer-state-isolation",
+    "routes": [
+      {
+        "path": "/fabrication",
+        "body": {
+          "job": "j3",
+          "generation": "g1",
+          "sealed": true,
+          "layers": [
+            {
+              "id": "a",
+              "href": "/layer/a"
+            },
+            {
+              "id": "b",
+              "href": "/layer/b"
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/layer/a",
+        "body": [
+          {
+            "op": "format",
+            "integer": 2,
+            "decimal": 4,
+            "zeroSuppression": "leading"
+          },
+          {
+            "op": "unit",
+            "value": "mm"
+          },
+          {
+            "op": "aperture",
+            "id": "10",
+            "shape": "C",
+            "params": [
+              "0.5"
+            ]
+          },
+          {
+            "op": "select",
+            "id": "10"
+          },
+          {
+            "op": "flash",
+            "x": "10000",
+            "y": "20000"
+          }
+        ],
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/layer/b",
+        "body": [
+          {
+            "op": "flash",
+            "x": "10000",
+            "y": "20000"
+          }
+        ],
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "layer": "a",
+        "kind": "flash",
+        "position": [
+          1,
+          2
+        ]
+      }
+    ],
+    "forbidden": [
+      {
+        "layer": "b",
+        "kind": "flash",
+        "position": [
+          1,
+          2
+        ]
+      }
+    ],
+    "complete": false
+  },
+  {
+    "name": "region-not-testpoints",
+    "routes": [
+      {
+        "path": "/fabrication",
+        "body": {
+          "job": "j1",
+          "layers": [
+            {
+              "id": "top",
+              "href": "/layer/top"
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/layer/top",
+        "body": [
+          {
+            "op": "format",
+            "integer": 2,
+            "decimal": 4,
+            "zeroSuppression": "leading"
+          },
+          {
+            "op": "unit",
+            "value": "mm"
+          },
+          {
+            "op": "regionBegin"
+          },
+          {
+            "op": "move",
+            "x": "0",
+            "y": "0"
+          },
+          {
+            "op": "draw",
+            "x": "10000",
+            "y": "0"
+          },
+          {
+            "op": "draw",
+            "x": "10000",
+            "y": "10000"
+          },
+          {
+            "op": "draw",
+            "x": "0",
+            "y": "0"
+          },
+          {
+            "op": "regionEnd"
+          }
+        ],
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "kind": "region"
+      }
+    ],
+    "forbidden": []
+  }
+]
