@@ -2,7 +2,7 @@
 
 ## 新来源
 
-GET /fabrication 给出job、layers。每layer的href返回上游已分词的JSON指令数组，并保留byteStart/byteEnd；本题不负责通用Gerber词法。指令op支持format(integer,decimal,zeroSuppression=leading)、unit(mm/inch)、aperture(id,shape,params)、select(id)、attribute(scope=file/aperture/object,key,value)、deleteAttribute(scope,key或*)、move(x,y)、draw(x,y)、flash(x,y)、regionBegin、regionEnd；x/y是可省略的整数数字串，按当前format解释，省略轴继承当前位置但首次省略为未知。object属性只向后生效；aperture属性在定义aperture时捕获。输出kind、position/end、unit、aperture、attributes、sourceRange；区域输出region而非flash。 manifest可额外带generation、sealed；layer可给generation和parts替代href。parts按顺序组成一层的指令流，模态状态跨同层part保留，但不同layer独立。part响应X-Generation需匹配manifest，不匹配或sealed=false时不得将新交付标成完整。所有记录保留job/layer/generation；旧归档历史不得被另一代际对象覆盖。
+GET /fabrication 给出job、layers。每layer的href返回上游已分词的JSON指令数组，并保留byteStart/byteEnd；通用Gerber词法由上游处理。指令op支持format(integer,decimal,zeroSuppression=leading)、unit(mm/inch)、aperture(id,shape,params)、select(id)、attribute(scope=file/aperture/object,key,value)、deleteAttribute(scope,key或*)、move(x,y)、draw(x,y)、flash(x,y)、regionBegin、regionEnd；x/y是可省略的整数数字串，按当前format解释，省略轴继承当前位置但首次省略为未知。object属性只向后生效；aperture属性在定义aperture时捕获。输出kind、position/end、unit、aperture、attributes、sourceRange；区域输出region而非flash。 manifest可额外带generation、sealed；layer可给generation和parts替代href。parts按顺序组成一层的指令流，模态状态跨同层part保留，但不同layer独立。part响应X-Generation需匹配manifest，不匹配或sealed=false时不得将新交付标成完整。所有记录保留job/layer/generation；旧归档历史不得被另一代际对象覆盖。
 
 本地来源只实现以上明确子集，不要求补全同类公开标准。未声明的字段与语法不得自动解释成有效业务事实。样本中的所有人员、账户、样本、设备与文件内容均为合成资料，无生产访问凭据。
 
